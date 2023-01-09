@@ -1,0 +1,1456 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ECommons</name>
+    </assembly>
+    <members>
+        <member name="T:ECommons.Automation.Chat">
+            <summary>
+            A class containing chat functionality
+            </summary>
+        </member>
+        <member name="M:ECommons.Automation.Chat.SendMessageUnsafe(System.Byte[])">
+            <summary>
+            <para>
+            Send a given message to the chat box. <b>This can send chat to the server.</b>
+            </para>
+            <para>
+            <b>This method is unsafe.</b> This method does no checking on your input and
+            may send content to the server that the normal client could not. You must
+            verify what you're sending and handle content and length to properly use
+            this.
+            </para>
+            </summary>
+            <param name="message">Message to send</param>
+            <exception cref="T:System.InvalidOperationException">If the signature for this function could not be found</exception>
+        </member>
+        <member name="M:ECommons.Automation.Chat.SendMessage(System.String)">
+            <summary>
+            <para>
+            Send a given message to the chat box. <b>This can send chat to the server.</b>
+            </para>
+            <para>
+            This method is slightly less unsafe than <see cref="M:ECommons.Automation.Chat.SendMessageUnsafe(System.Byte[])"/>. It
+            will throw exceptions for certain inputs that the client can't normally send,
+            but it is still possible to make mistakes. Use with caution.
+            </para>
+            </summary>
+            <param name="message">message to send</param>
+            <exception cref="T:System.ArgumentException">If <paramref name="message"/> is empty, longer than 500 bytes in UTF-8, or contains invalid characters.</exception>
+            <exception cref="T:System.InvalidOperationException">If the signature for this function could not be found</exception>
+        </member>
+        <member name="M:ECommons.Automation.Chat.SanitiseText(System.String)">
+            <summary>
+            <para>
+            Sanitises a string by removing any invalid input.
+            </para>
+            <para>
+            The result of this method is safe to use with
+            <see cref="M:ECommons.Automation.Chat.SendMessage(System.String)"/>, provided that it is not empty or too
+            long.
+            </para>
+            </summary>
+            <param name="text">text to sanitise</param>
+            <returns>sanitised text</returns>
+            <exception cref="T:System.InvalidOperationException">If the signature for this function could not be found</exception>
+        </member>
+        <member name="T:ECommons.CircularBuffers.CircularBuffer`1">
+            <inheritdoc/>
+            <summary>
+            Circular buffer.
+            
+            When writing to a full buffer:
+            PushBack -> removes this[0] / Front()
+            PushFront -> removes this[Size-1] / Back()
+            
+            this implementation is inspired by
+            http://www.boost.org/doc/libs/1_53_0/libs/circular_buffer/doc/circular_buffer.html
+            because I liked their interface.
+            </summary>
+        </member>
+        <member name="F:ECommons.CircularBuffers.CircularBuffer`1._start">
+            <summary>
+            The _start. Index of the first element in buffer.
+            </summary>
+        </member>
+        <member name="F:ECommons.CircularBuffers.CircularBuffer`1._end">
+            <summary>
+            The _end. Index after the last element in the buffer.
+            </summary>
+        </member>
+        <member name="F:ECommons.CircularBuffers.CircularBuffer`1._size">
+            <summary>
+            The _size. Buffer size.
+            </summary>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ECommons.CircularBuffers.CircularBuffer`1"/> class.
+            
+            </summary>
+            <param name='capacity'>
+            Buffer capacity. Must be positive.
+            </param>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.#ctor(System.Int32,`0[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:ECommons.CircularBuffers.CircularBuffer`1"/> class.
+            
+            </summary>
+            <param name='capacity'>
+            Buffer capacity. Must be positive.
+            </param>
+            <param name='items'>
+            Items to fill buffer with. Items length must be less than capacity.
+            Suggestion: use Skip(x).Take(y).ToArray() to build this argument from
+            any enumerable.
+            </param>
+        </member>
+        <member name="P:ECommons.CircularBuffers.CircularBuffer`1.Capacity">
+            <summary>
+            Maximum capacity of the buffer. Elements pushed into the buffer after
+            maximum capacity is reached (IsFull = true), will remove an element.
+            </summary>
+        </member>
+        <member name="P:ECommons.CircularBuffers.CircularBuffer`1.IsFull">
+            <summary>
+            Boolean indicating if Circular is at full capacity.
+            Adding more elements when the buffer is full will
+            cause elements to be removed from the other end
+            of the buffer.
+            </summary>
+        </member>
+        <member name="P:ECommons.CircularBuffers.CircularBuffer`1.IsEmpty">
+            <summary>
+            True if has no elements.
+            </summary>
+        </member>
+        <member name="P:ECommons.CircularBuffers.CircularBuffer`1.Size">
+            <summary>
+            Current buffer size (the number of elements that the buffer has).
+            </summary>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.Front">
+            <summary>
+            Element at the front of the buffer - this[0].
+            </summary>
+            <returns>The value of the element of type T at the front of the buffer.</returns>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.Back">
+            <summary>
+            Element at the back of the buffer - this[Size - 1].
+            </summary>
+            <returns>The value of the element of type T at the back of the buffer.</returns>
+        </member>
+        <member name="P:ECommons.CircularBuffers.CircularBuffer`1.Item(System.Int32)">
+            <summary>
+            Index access to elements in buffer.
+            Index does not loop around like when adding elements,
+            valid interval is [0;Size[
+            </summary>
+            <param name="index">Index of element to access.</param>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when index is outside of [; Size[ interval.</exception>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.PushBack(`0)">
+            <summary>
+            Pushes a new element to the back of the buffer. Back()/this[Size-1]
+            will now return this element.
+            
+            When the buffer is full, the element at Front()/this[0] will be 
+            popped to allow for this new element to fit.
+            </summary>
+            <param name="item">Item to push to the back of the buffer</param>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.PushFront(`0)">
+            <summary>
+            Pushes a new element to the front of the buffer. Front()/this[0]
+            will now return this element.
+            
+            When the buffer is full, the element at Back()/this[Size-1] will be 
+            popped to allow for this new element to fit.
+            </summary>
+            <param name="item">Item to push to the front of the buffer</param>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.PopBack">
+            <summary>
+            Removes the element at the back of the buffer. Decreasing the 
+            Buffer size by 1.
+            </summary>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.PopFront">
+            <summary>
+            Removes the element at the front of the buffer. Decreasing the 
+            Buffer size by 1.
+            </summary>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.Clear">
+            <summary>
+            Clears the contents of the array. Size = 0, Capacity is unchanged.
+            </summary>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.ToArray">
+            <summary>
+            Copies the buffer contents to an array, according to the logical
+            contents of the buffer (i.e. independent of the internal 
+            order/contents)
+            </summary>
+            <returns>A new array with a copy of the buffer contents.</returns>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.ToArraySegments">
+             <summary>
+             Get the contents of the buffer as 2 ArraySegments.
+             Respects the logical contents of the buffer, where
+             each segment and items in each segment are ordered
+             according to insertion.
+            
+             Fast: does not copy the array elements.
+             Useful for methods like <c>Send(IList&lt;ArraySegment&lt;Byte&gt;&gt;)</c>.
+             
+             <remarks>Segments may be empty.</remarks>
+             </summary>
+             <returns>An IList with 2 segments corresponding to the buffer content.</returns>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through this buffer.
+            </summary>
+            <returns>An enumerator that can be used to iterate this collection.</returns>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.Increment(System.Int32@)">
+            <summary>
+            Increments the provided index variable by one, wrapping
+            around if necessary.
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.Decrement(System.Int32@)">
+            <summary>
+            Decrements the provided index variable by one, wrapping
+            around if necessary.
+            </summary>
+            <param name="index"></param>
+        </member>
+        <member name="M:ECommons.CircularBuffers.CircularBuffer`1.InternalIndex(System.Int32)">
+            <summary>
+            Converts the index in the argument to an index in <code>_buffer</code>
+            </summary>
+            <returns>
+            The transformed index.
+            </returns>
+            <param name='index'>
+            External index.
+            </param>
+        </member>
+        <member name="T:ECommons.ExcelResolver`1">
+            <summary>
+            This object resolves a rowID within an Excel sheet.
+            </summary>
+            <typeparam name="T">The type of Lumina sheet to resolve.</typeparam>
+        </member>
+        <member name="M:ECommons.ExcelResolver`1.#ctor(System.UInt32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ECommons.ExcelResolver`1"/> class.
+            </summary>
+            <param name="id">The ID of the classJob.</param>
+        </member>
+        <member name="P:ECommons.ExcelResolver`1.Id">
+            <summary>
+            Gets the ID to be resolved.
+            </summary>
+        </member>
+        <member name="P:ECommons.ExcelResolver`1.GameData">
+            <summary>
+            Gets GameData linked to this excel row.
+            </summary>
+        </member>
+        <member name="M:ECommons.ExcelResolver`1.GetWithLanguage(Dalamud.ClientLanguage)">
+            <summary>
+            Gets GameData linked to this excel row with the specified language.
+            </summary>
+            <param name="language">The language.</param>
+            <returns>The ExcelRow in the specified language.</returns>
+        </member>
+        <member name="M:ECommons.Interop.WindowFunctions.ApplicationIsActivated">
+            <summary>Returns true if the current application has focus, false otherwise</summary>
+        </member>
+        <member name="T:ECommons.MathHelpers.Vector2Double">
+            <summary>
+            A structure encapsulating two Double precision doubleing point values and provides hardware accelerated methods.
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector2Double.Zero">
+            <summary>
+            Returns the vector (0,0).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector2Double.One">
+            <summary>
+            Returns the vector (1,1).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector2Double.UnitX">
+            <summary>
+            Returns the vector (1,0).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector2Double.UnitY">
+            <summary>
+            Returns the vector (0,1).
+            </summary>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Equals(System.Object)">
+            <summary>
+            Returns a boolean indicating whether the given Object is equal to this Vector2 instance.
+            </summary>
+            <param name="obj">The Object to compare against.</param>
+            <returns>True if the Object is equal to this Vector2; False otherwise.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.ToString">
+            <summary>
+            Returns a String representing this Vector2 instance.
+            </summary>
+            <returns>The string representation.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.ToString(System.String)">
+            <summary>
+            Returns a String representing this Vector2 instance, using the specified format to format individual elements.
+            </summary>
+            <param name="format">The format of individual elements.</param>
+            <returns>The string representation.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.ToString(System.String,System.IFormatProvider)">
+            <summary>
+            Returns a String representing this Vector2 instance, using the specified format to format individual elements 
+            and the given IFormatProvider.
+            </summary>
+            <param name="format">The format of individual elements.</param>
+            <param name="formatProvider">The format provider to use when formatting elements.</param>
+            <returns>The string representation.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Length">
+            <summary>
+            Returns the length of the vector.
+            </summary>
+            <returns>The vector's length.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.LengthSquared">
+            <summary>
+            Returns the length of the vector squared. This operation is cheaper than Length().
+            </summary>
+            <returns>The vector's length squared.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Distance(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns the Euclidean distance between the two given points.
+            </summary>
+            <param name="value1">The first point.</param>
+            <param name="value2">The second point.</param>
+            <returns>The distance.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.DistanceSquared(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns the Euclidean distance squared between the two given points.
+            </summary>
+            <param name="value1">The first point.</param>
+            <param name="value2">The second point.</param>
+            <returns>The distance squared.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Normalize(ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a vector with the same direction as the given vector, but with a length of 1.
+            </summary>
+            <param name="value">The vector to normalize.</param>
+            <returns>The normalized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Reflect(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns the reflection of a vector off a surface that has the specified normal.
+            </summary>
+            <param name="vector">The source vector.</param>
+            <param name="normal">The normal of the surface being reflected off.</param>
+            <returns>The reflected vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Clamp(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Restricts a vector between a min and max value.
+            </summary>
+            <param name="value1">The source vector.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Lerp(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double,System.Double)">
+            <summary>
+            Linearly interpolates between two vectors based on the given weighting.
+            </summary>
+            <param name="value1">The first source vector.</param>
+            <param name="value2">The second source vector.</param>
+            <param name="amount">Value between 0 and 1 indicating the weight of the second source vector.</param>
+            <returns>The interpolated vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Transform(ECommons.MathHelpers.Vector2Double,System.Numerics.Matrix3x2)">
+            <summary>
+            Transforms a vector by the given matrix.
+            </summary>
+            <param name="position">The source vector.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Transform(ECommons.MathHelpers.Vector2Double,System.Numerics.Matrix4x4)">
+            <summary>
+            Transforms a vector by the given matrix.
+            </summary>
+            <param name="position">The source vector.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.TransformNormal(ECommons.MathHelpers.Vector2Double,System.Numerics.Matrix3x2)">
+            <summary>
+            Transforms a vector normal by the given matrix.
+            </summary>
+            <param name="normal">The source vector.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.TransformNormal(ECommons.MathHelpers.Vector2Double,System.Numerics.Matrix4x4)">
+            <summary>
+            Transforms a vector normal by the given matrix.
+            </summary>
+            <param name="normal">The source vector.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Transform(ECommons.MathHelpers.Vector2Double,System.Numerics.Quaternion)">
+            <summary>
+            Transforms a vector by the given Quaternion rotation value.
+            </summary>
+            <param name="value">The source vector to be rotated.</param>
+            <param name="rotation">The rotation to apply.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Add(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Adds two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The summed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Subtract(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Subtracts the second vector from the first.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The difference vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Multiply(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Multiplies two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The product vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Multiply(ECommons.MathHelpers.Vector2Double,System.Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The source vector.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Multiply(System.Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The scalar value.</param>
+            <param name="right">The source vector.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Divide(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Divides the first vector by the second.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The vector resulting from the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Divide(ECommons.MathHelpers.Vector2Double,System.Double)">
+            <summary>
+            Divides the vector by the given scalar.
+            </summary>
+            <param name="left">The source vector.</param>
+            <param name="divisor">The scalar value.</param>
+            <returns>The result of the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Negate(ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Negates a given vector.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The negated vector.</returns>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector2Double.X">
+            <summary>
+            The X component of the vector.
+            </summary>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector2Double.Y">
+            <summary>
+            The Y component of the vector.
+            </summary>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.#ctor(System.Double)">
+            <summary>
+            Constructs a vector whose elements are all the Double specified value.
+            </summary>
+            <param name="value">The element to fill the vector with.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.#ctor(System.Double,System.Double)">
+            <summary>
+            Constructs a vector with the given individual elements.
+            </summary>
+            <param name="x">The X component.</param>
+            <param name="y">The Y component.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.CopyTo(System.Double[])">
+            <summary>
+            Copies the contents of the vector into the given array.
+            </summary>
+            <param name="array">The destination array.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.CopyTo(System.Double[],System.Int32)">
+            <summary>
+            Copies the contents of the vector into the given array, starting from the given index.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">If array is null.</exception>
+            <exception cref="T:System.RankException">If array is multidimensional.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">If index is greater than end of the array or index is less than zero.</exception>
+            <exception cref="T:System.ArgumentException">If number of elements in source vector is greater than those available in destination array
+            or if there are not enough elements to copy.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Equals(ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a boolean indicating whether the given Vector2 is equal to this Vector2 instance.
+            </summary>
+            <param name="other">The Vector2 to compare this instance to.</param>
+            <returns>True if the other Vector2 is equal to this instance; False otherwise.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Dot(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns the dot product of two vectors.
+            </summary>
+            <param name="value1">The first vector.</param>
+            <param name="value2">The second vector.</param>
+            <returns>The dot product.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Min(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a vector whose elements are the minimum of each of the pairs of elements in the two source vectors.
+            </summary>
+            <param name="value1">The first source vector.</param>
+            <param name="value2">The second source vector.</param>
+            <returns>The minimized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Max(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a vector whose elements are the maximum of each of the pairs of elements in the two source vectors
+            </summary>
+            <param name="value1">The first source vector</param>
+            <param name="value2">The second source vector</param>
+            <returns>The maximized vector</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.Abs(ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a vector whose elements are the absolute values of each of the source vector's elements.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The absolute value vector.</returns>        
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.SquareRoot(ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a vector whose elements are the square root of each of the source vector's elements.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The square root vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Addition(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Adds two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The summed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Subtraction(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Subtracts the second vector from the first.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The difference vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Multiply(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Multiplies two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The product vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Multiply(System.Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The scalar value.</param>
+            <param name="right">The source vector.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Multiply(ECommons.MathHelpers.Vector2Double,System.Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The source vector.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Division(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Divides the first vector by the second.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The vector resulting from the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Division(ECommons.MathHelpers.Vector2Double,System.Double)">
+            <summary>
+            Divides the vector by the given scalar.
+            </summary>
+            <param name="value1">The source vector.</param>
+            <param name="value2">The scalar value.</param>
+            <returns>The result of the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_UnaryNegation(ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Negates a given vector.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The negated vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Equality(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a boolean indicating whether the two given vectors are equal.
+            </summary>
+            <param name="left">The first vector to compare.</param>
+            <param name="right">The second vector to compare.</param>
+            <returns>True if the vectors are equal; False otherwise.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector2Double.op_Inequality(ECommons.MathHelpers.Vector2Double,ECommons.MathHelpers.Vector2Double)">
+            <summary>
+            Returns a boolean indicating whether the two given vectors are not equal.
+            </summary>
+            <param name="left">The first vector to compare.</param>
+            <param name="right">The second vector to compare.</param>
+            <returns>True if the vectors are not equal; False if they are equal.</returns>
+        </member>
+        <member name="T:ECommons.MathHelpers.Vector3Double">
+            <summary>
+            A structure encapsulating three Double precision doubleing point values and provides hardware accelerated methods.
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector3Double.Zero">
+            <summary>
+            Returns the vector (0,0,0).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector3Double.One">
+            <summary>
+            Returns the vector (1,1,1).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector3Double.UnitX">
+            <summary>
+            Returns the vector (1,0,0).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector3Double.UnitY">
+            <summary>
+            Returns the vector (0,1,0).
+            </summary>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector3Double.UnitZ">
+            <summary>
+            Returns the vector (0,0,1).
+            </summary>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Equals(System.Object)">
+            <summary>
+            Returns a boolean indicating whether the given Object is equal to this Vector3Double instance.
+            </summary>
+            <param name="obj">The Object to compare against.</param>
+            <returns>True if the Object is equal to this Vector3Double; False otherwise.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.ToString">
+            <summary>
+            Returns a String representing this Vector3Double instance.
+            </summary>
+            <returns>The string representation.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.ToString(System.String)">
+            <summary>
+            Returns a String representing this Vector3Double instance, using the specified format to format individual elements.
+            </summary>
+            <param name="format">The format of individual elements.</param>
+            <returns>The string representation.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.ToString(System.String,System.IFormatProvider)">
+            <summary>
+            Returns a String representing this Vector3Double instance, using the specified format to format individual elements 
+            and the given IFormatProvider.
+            </summary>
+            <param name="format">The format of individual elements.</param>
+            <param name="formatProvider">The format provider to use when formatting elements.</param>
+            <returns>The string representation.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Length">
+            <summary>
+            Returns the length of the vector.
+            </summary>
+            <returns>The vector's length.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.LengthSquared">
+            <summary>
+            Returns the length of the vector squared. This operation is cheaper than Length().
+            </summary>
+            <returns>The vector's length squared.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Distance(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns the Euclidean distance between the two given points.
+            </summary>
+            <param name="value1">The first point.</param>
+            <param name="value2">The second point.</param>
+            <returns>The distance.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.DistanceSquared(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns the Euclidean distance squared between the two given points.
+            </summary>
+            <param name="value1">The first point.</param>
+            <param name="value2">The second point.</param>
+            <returns>The distance squared.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Normalize(ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a vector with the same direction as the given vector, but with a length of 1.
+            </summary>
+            <param name="value">The vector to normalize.</param>
+            <returns>The normalized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Cross(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Computes the cross product of two vectors.
+            </summary>
+            <param name="vector1">The first vector.</param>
+            <param name="vector2">The second vector.</param>
+            <returns>The cross product.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Reflect(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns the reflection of a vector off a surface that has the specified normal.
+            </summary>
+            <param name="vector">The source vector.</param>
+            <param name="normal">The normal of the surface being reflected off.</param>
+            <returns>The reflected vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Clamp(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Restricts a vector between a min and max value.
+            </summary>
+            <param name="value1">The source vector.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <returns>The restricted vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Lerp(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double,System.Double)">
+            <summary>
+            Linearly interpolates between two vectors based on the given weighting.
+            </summary>
+            <param name="value1">The first source vector.</param>
+            <param name="value2">The second source vector.</param>
+            <param name="amount">Value between 0 and 1 indicating the weight of the second source vector.</param>
+            <returns>The interpolated vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Transform(ECommons.MathHelpers.Vector3Double,System.Numerics.Matrix4x4)">
+            <summary>
+            Transforms a vector by the given matrix.
+            </summary>
+            <param name="position">The source vector.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.TransformNormal(ECommons.MathHelpers.Vector3Double,System.Numerics.Matrix4x4)">
+            <summary>
+            Transforms a vector normal by the given matrix.
+            </summary>
+            <param name="normal">The source vector.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Transform(ECommons.MathHelpers.Vector3Double,System.Numerics.Quaternion)">
+            <summary>
+            Transforms a vector by the given Quaternion rotation value.
+            </summary>
+            <param name="value">The source vector to be rotated.</param>
+            <param name="rotation">The rotation to apply.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Add(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Adds two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The summed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Subtract(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Subtracts the second vector from the first.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The difference vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Multiply(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Multiplies two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The product vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Multiply(ECommons.MathHelpers.Vector3Double,System.Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The source vector.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Multiply(System.Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The scalar value.</param>
+            <param name="right">The source vector.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Divide(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Divides the first vector by the second.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The vector resulting from the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Divide(ECommons.MathHelpers.Vector3Double,System.Double)">
+            <summary>
+            Divides the vector by the given scalar.
+            </summary>
+            <param name="left">The source vector.</param>
+            <param name="divisor">The scalar value.</param>
+            <returns>The result of the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Negate(ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Negates a given vector.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The negated vector.</returns>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector3Double.X">
+            <summary>
+            The X component of the vector.
+            </summary>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector3Double.Y">
+            <summary>
+            The Y component of the vector.
+            </summary>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector3Double.Z">
+            <summary>
+            The Z component of the vector.
+            </summary>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.#ctor(System.Double)">
+            <summary>
+            Constructs a vector whose elements are all the Double specified value.
+            </summary>
+            <param name="value">The element to fill the vector with.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.#ctor(ECommons.MathHelpers.Vector2Double,System.Double)">
+            <summary>
+            Constructs a Vector3Double from the given Vector2 and a third value.
+            </summary>
+            <param name="value">The Vector to extract X and Y components from.</param>
+            <param name="z">The Z component.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.#ctor(System.Double,System.Double,System.Double)">
+            <summary>
+            Constructs a vector with the given individual elements.
+            </summary>
+            <param name="x">The X component.</param>
+            <param name="y">The Y component.</param>
+            <param name="z">The Z component.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.CopyTo(System.Double[])">
+            <summary>
+            Copies the contents of the vector into the given array.
+            </summary>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.CopyTo(System.Double[],System.Int32)">
+            <summary>
+            Copies the contents of the vector into the given array, starting from index.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">If array is null.</exception>
+            <exception cref="T:System.RankException">If array is multidimensional.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">If index is greater than end of the array or index is less than zero.</exception>
+            <exception cref="T:System.ArgumentException">If number of elements in source vector is greater than those available in destination array.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Equals(ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a boolean indicating whether the given Vector3Double is equal to this Vector3Double instance.
+            </summary>
+            <param name="other">The Vector3Double to compare this instance to.</param>
+            <returns>True if the other Vector3Double is equal to this instance; False otherwise.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Dot(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns the dot product of two vectors.
+            </summary>
+            <param name="vector1">The first vector.</param>
+            <param name="vector2">The second vector.</param>
+            <returns>The dot product.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Min(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a vector whose elements are the minimum of each of the pairs of elements in the two source vectors.
+            </summary>
+            <param name="value1">The first source vector.</param>
+            <param name="value2">The second source vector.</param>
+            <returns>The minimized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Max(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a vector whose elements are the maximum of each of the pairs of elements in the two source vectors.
+            </summary>
+            <param name="value1">The first source vector.</param>
+            <param name="value2">The second source vector.</param>
+            <returns>The maximized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.Abs(ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a vector whose elements are the absolute values of each of the source vector's elements.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The absolute value vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.SquareRoot(ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a vector whose elements are the square root of each of the source vector's elements.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The square root vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Addition(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Adds two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The summed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Subtraction(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Subtracts the second vector from the first.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The difference vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Multiply(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Multiplies two vectors together.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The product vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Multiply(ECommons.MathHelpers.Vector3Double,System.Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The source vector.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Multiply(System.Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Multiplies a vector by the given scalar.
+            </summary>
+            <param name="left">The scalar value.</param>
+            <param name="right">The source vector.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Division(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Divides the first vector by the second.
+            </summary>
+            <param name="left">The first source vector.</param>
+            <param name="right">The second source vector.</param>
+            <returns>The vector resulting from the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Division(ECommons.MathHelpers.Vector3Double,System.Double)">
+            <summary>
+            Divides the vector by the given scalar.
+            </summary>
+            <param name="value1">The source vector.</param>
+            <param name="value2">The scalar value.</param>
+            <returns>The result of the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_UnaryNegation(ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Negates a given vector.
+            </summary>
+            <param name="value">The source vector.</param>
+            <returns>The negated vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Equality(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a boolean indicating whether the two given vectors are equal.
+            </summary>
+            <param name="left">The first vector to compare.</param>
+            <param name="right">The second vector to compare.</param>
+            <returns>True if the vectors are equal; False otherwise.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector3Double.op_Inequality(ECommons.MathHelpers.Vector3Double,ECommons.MathHelpers.Vector3Double)">
+            <summary>
+            Returns a boolean indicating whether the two given vectors are not equal.
+            </summary>
+            <param name="left">The first vector to compare.</param>
+            <param name="right">The second vector to compare.</param>
+            <returns>True if the vectors are not equal; False if they are equal.</returns>
+        </member>
+        <member name="T:ECommons.MathHelpers.Vector4Double">
+            <summary>Represents a vector with four single-precision doubleing-point values.</summary>
+            <remarks><format type="text/markdown"><![CDATA[
+            The <xref:System.Numerics.Vector4> structure provides support for hardware acceleration.
+            [!INCLUDE[vectors-are-rows-paragraph](~/includes/system-numerics-vectors-are-rows.md)]
+            ]]></format></remarks>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector4Double.X">
+            <summary>The X component of the vector.</summary>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector4Double.Y">
+            <summary>The Y component of the vector.</summary>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector4Double.Z">
+            <summary>The Z component of the vector.</summary>
+        </member>
+        <member name="F:ECommons.MathHelpers.Vector4Double.W">
+            <summary>The W component of the vector.</summary>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.#ctor(System.Double)">
+            <summary>Creates a new <see cref="T:System.Numerics.Vector4" /> object whose four elements have the same value.</summary>
+            <param name="value">The value to assign to all four elements.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.#ctor(ECommons.MathHelpers.Vector2Double,System.Double,System.Double)">
+            <summary>Creates a   new <see cref="T:System.Numerics.Vector4" /> object from the specified <see cref="T:ECommons.MathHelpers.Vector2Double" /> object and a Z and a W component.</summary>
+            <param name="value">The vector to use for the X and Y components.</param>
+            <param name="z">The Z component.</param>
+            <param name="w">The W component.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.#ctor(ECommons.MathHelpers.Vector3Double,System.Double)">
+            <summary>Constructs a new <see cref="T:System.Numerics.Vector4" /> object from the specified <see cref="T:ECommons.MathHelpers.Vector3Double" /> object and a W component.</summary>
+            <param name="value">The vector to use for the X, Y, and Z components.</param>
+            <param name="w">The W component.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.#ctor(System.Double,System.Double,System.Double,System.Double)">
+            <summary>Creates a vector whose elements have the specified values.</summary>
+            <param name="x">The value to assign to the <see cref="F:System.Numerics.Vector4.X" /> field.</param>
+            <param name="y">The value to assign to the <see cref="F:System.Numerics.Vector4.Y" /> field.</param>
+            <param name="z">The value to assign to the <see cref="F:System.Numerics.Vector4.Z" /> field.</param>
+            <param name="w">The value to assign to the <see cref="F:System.Numerics.Vector4.W" /> field.</param>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.#ctor(System.ReadOnlySpan{System.Double})">
+            <summary>Constructs a vector from the given <see cref="T:System.ReadOnlySpan`1" />. The span must contain at least 4 elements.</summary>
+            <param name="values">The span of elements to assign to the vector.</param>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.Zero">
+            <summary>Gets a vector whose 4 elements are equal to zero.</summary>
+            <value>A vector whose four elements are equal to zero (that is, it returns the vector <c>(0,0,0,0)</c>.</value>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.One">
+            <summary>Gets a vector whose 4 elements are equal to one.</summary>
+            <value>Returns <see cref="T:System.Numerics.Vector4" />.</value>
+            <remarks>A vector whose four elements are equal to one (that is, it returns the vector <c>(1,1,1,1)</c>.</remarks>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.UnitX">
+            <summary>Gets the vector (1,0,0,0).</summary>
+            <value>The vector <c>(1,0,0,0)</c>.</value>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.UnitY">
+            <summary>Gets the vector (0,1,0,0).</summary>
+            <value>The vector <c>(0,1,0,0)</c>.</value>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.UnitZ">
+            <summary>Gets the vector (0,0,1,0).</summary>
+            <value>The vector <c>(0,0,1,0)</c>.</value>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.UnitW">
+            <summary>Gets the vector (0,0,0,1).</summary>
+            <value>The vector <c>(0,0,0,1)</c>.</value>
+        </member>
+        <member name="P:ECommons.MathHelpers.Vector4Double.Item(System.Int32)">
+            <summary>Gets or sets the element at the specified index.</summary>
+            <param name="index">The index of the element to get or set.</param>
+            <returns>The the element at <paramref name="index" />.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than the number of elements.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.GetElement(ECommons.MathHelpers.Vector4Double,System.Int32)">
+            <summary>Gets the element at the specified index.</summary>
+            <param name="vector">The vector of the element to get.</param>
+            <param name="index">The index of the element to get.</param>
+            <returns>The value of the element at <paramref name="index" />.</returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than the number of elements.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.WithElement(ECommons.MathHelpers.Vector4Double,System.Int32,System.Double)">
+            <summary>Sets the element at the specified index.</summary>
+            <param name="vector">The vector of the element to get.</param>
+            <param name="index">The index of the element to set.</param>
+            <param name="value">The value of the element to set.</param>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> was less than zero or greater than the number of elements.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Addition(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Adds two vectors together.</summary>
+            <param name="left">The first vector to add.</param>
+            <param name="right">The second vector to add.</param>
+            <returns>The summed vector.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Addition(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the addition operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Division(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Divides the first vector by the second.</summary>
+            <param name="left">The first vector.</param>
+            <param name="right">The second vector.</param>
+            <returns>The vector that results from dividing <paramref name="left" /> by <paramref name="right" />.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Division(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the division operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Division(ECommons.MathHelpers.Vector4Double,System.Double)">
+            <summary>Divides the specified vector by a specified scalar value.</summary>
+            <param name="value1">The vector.</param>
+            <param name="value2">The scalar value.</param>
+            <returns>The result of the division.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Division(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the division operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Equality(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a value that indicates whether each pair of elements in two specified vectors is equal.</summary>
+            <param name="left">The first vector to compare.</param>
+            <param name="right">The second vector to compare.</param>
+            <returns><see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise, <see langword="false" />.</returns>
+            <remarks>Two <see cref="T:System.Numerics.Vector4" /> objects are equal if each element in <paramref name="left" /> is equal to the corresponding element in <paramref name="right" />.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Inequality(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a value that indicates whether two specified vectors are not equal.</summary>
+            <param name="left">The first vector to compare.</param>
+            <param name="right">The second vector to compare.</param>
+            <returns><see langword="true" /> if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, <see langword="false" />.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Multiply(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a new vector whose values are the product of each pair of elements in two specified vectors.</summary>
+            <param name="left">The first vector.</param>
+            <param name="right">The second vector.</param>
+            <returns>The element-wise product vector.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the multiplication operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Multiply(ECommons.MathHelpers.Vector4Double,System.Double)">
+            <summary>Multiplies the specified vector by the specified scalar value.</summary>
+            <param name="left">The vector.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the multiplication operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Multiply(System.Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Multiplies the scalar value by the specified vector.</summary>
+            <param name="left">The vector.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Multiply(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the multiplication operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_Subtraction(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Subtracts the second vector from the first.</summary>
+            <param name="left">The first vector.</param>
+            <param name="right">The second vector.</param>
+            <returns>The vector that results from subtracting <paramref name="right" /> from <paramref name="left" />.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_Subtraction(System.Numerics.Vector4,System.Numerics.Vector4)" /> method defines the subtraction operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.op_UnaryNegation(ECommons.MathHelpers.Vector4Double)">
+            <summary>Negates the specified vector.</summary>
+            <param name="value">The vector to negate.</param>
+            <returns>The negated vector.</returns>
+            <remarks>The <see cref="M:System.Numerics.Vector4.op_UnaryNegation(System.Numerics.Vector4)" /> method defines the unary negation operation for <see cref="T:System.Numerics.Vector4" /> objects.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Abs(ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a vector whose elements are the absolute values of each of the specified vector's elements.</summary>
+            <param name="value">A vector.</param>
+            <returns>The absolute value vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Add(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Adds two vectors together.</summary>
+            <param name="left">The first vector to add.</param>
+            <param name="right">The second vector to add.</param>
+            <returns>The summed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Clamp(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Restricts a vector between a minimum and a maximum value.</summary>
+            <param name="value1">The vector to restrict.</param>
+            <param name="min">The minimum value.</param>
+            <param name="max">The maximum value.</param>
+            <returns>The restricted vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Distance(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Computes the Euclidean distance between the two given points.</summary>
+            <param name="value1">The first point.</param>
+            <param name="value2">The second point.</param>
+            <returns>The distance.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.DistanceSquared(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns the Euclidean distance squared between two specified points.</summary>
+            <param name="value1">The first point.</param>
+            <param name="value2">The second point.</param>
+            <returns>The distance squared.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Divide(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Divides the first vector by the second.</summary>
+            <param name="left">The first vector.</param>
+            <param name="right">The second vector.</param>
+            <returns>The vector resulting from the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Divide(ECommons.MathHelpers.Vector4Double,System.Double)">
+            <summary>Divides the specified vector by a specified scalar value.</summary>
+            <param name="left">The vector.</param>
+            <param name="divisor">The scalar value.</param>
+            <returns>The vector that results from the division.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Dot(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns the dot product of two vectors.</summary>
+            <param name="vector1">The first vector.</param>
+            <param name="vector2">The second vector.</param>
+            <returns>The dot product.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Lerp(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double,System.Double)">
+            <summary>Performs a linear interpolation between two vectors based on the given weighting.</summary>
+            <param name="value1">The first vector.</param>
+            <param name="value2">The second vector.</param>
+            <param name="amount">A value between 0 and 1 that indicates the weight of <paramref name="value2" />.</param>
+            <returns>The interpolated vector.</returns>
+            <remarks><format type="text/markdown"><![CDATA[
+            The behavior of this method changed in .NET 5.0. For more information, see [Behavior change for Vector2Double.Lerp and Vector4.Lerp](/dotnet/core/compatibility/3.1-5.0#behavior-change-for-vector2lerp-and-vector4lerp).
+            ]]></format></remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Max(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a vector whose elements are the maximum of each of the pairs of elements in two specified vectors.</summary>
+            <param name="value1">The first vector.</param>
+            <param name="value2">The second vector.</param>
+            <returns>The maximized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Min(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a vector whose elements are the minimum of each of the pairs of elements in two specified vectors.</summary>
+            <param name="value1">The first vector.</param>
+            <param name="value2">The second vector.</param>
+            <returns>The minimized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Multiply(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a new vector whose values are the product of each pair of elements in two specified vectors.</summary>
+            <param name="left">The first vector.</param>
+            <param name="right">The second vector.</param>
+            <returns>The element-wise product vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Multiply(ECommons.MathHelpers.Vector4Double,System.Double)">
+            <summary>Multiplies a vector by a specified scalar.</summary>
+            <param name="left">The vector to multiply.</param>
+            <param name="right">The scalar value.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Multiply(System.Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Multiplies a scalar value by a specified vector.</summary>
+            <param name="left">The scaled value.</param>
+            <param name="right">The vector.</param>
+            <returns>The scaled vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Negate(ECommons.MathHelpers.Vector4Double)">
+            <summary>Negates a specified vector.</summary>
+            <param name="value">The vector to negate.</param>
+            <returns>The negated vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Normalize(ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a vector with the same direction as the specified vector, but with a length of one.</summary>
+            <param name="vector">The vector to normalize.</param>
+            <returns>The normalized vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.SquareRoot(ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a vector whose elements are the square root of each of a specified vector's elements.</summary>
+            <param name="value">A vector.</param>
+            <returns>The square root vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Subtract(ECommons.MathHelpers.Vector4Double,ECommons.MathHelpers.Vector4Double)">
+            <summary>Subtracts the second vector from the first.</summary>
+            <param name="left">The first vector.</param>
+            <param name="right">The second vector.</param>
+            <returns>The difference vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Transform(ECommons.MathHelpers.Vector2Double,System.Numerics.Matrix4x4)">
+            <summary>Transforms a two-dimensional vector by a specified 4x4 matrix.</summary>
+            <param name="position">The vector to transform.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Transform(ECommons.MathHelpers.Vector2Double,System.Numerics.Quaternion)">
+            <summary>Transforms a two-dimensional vector by the specified Quaternion rotation value.</summary>
+            <param name="value">The vector to rotate.</param>
+            <param name="rotation">The rotation to apply.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Transform(ECommons.MathHelpers.Vector3Double,System.Numerics.Matrix4x4)">
+            <summary>Transforms a three-dimensional vector by a specified 4x4 matrix.</summary>
+            <param name="position">The vector to transform.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Transform(ECommons.MathHelpers.Vector3Double,System.Numerics.Quaternion)">
+            <summary>Transforms a three-dimensional vector by the specified Quaternion rotation value.</summary>
+            <param name="value">The vector to rotate.</param>
+            <param name="rotation">The rotation to apply.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Transform(ECommons.MathHelpers.Vector4Double,System.Numerics.Matrix4x4)">
+            <summary>Transforms a four-dimensional vector by a specified 4x4 matrix.</summary>
+            <param name="vector">The vector to transform.</param>
+            <param name="matrix">The transformation matrix.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Transform(ECommons.MathHelpers.Vector4Double,System.Numerics.Quaternion)">
+            <summary>Transforms a four-dimensional vector by the specified Quaternion rotation value.</summary>
+            <param name="value">The vector to rotate.</param>
+            <param name="rotation">The rotation to apply.</param>
+            <returns>The transformed vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.CopyTo(System.Double[])">
+            <summary>Copies the elements of the vector to a specified array.</summary>
+            <param name="array">The destination array.</param>
+            <remarks><paramref name="array" /> must have at least four elements. The method copies the vector's elements starting at index 0.</remarks>
+            <exception cref="T:System.NullReferenceException"><paramref name="array" /> is <see langword="null" />.</exception>
+            <exception cref="T:System.ArgumentException">The number of elements in the current instance is greater than in the array.</exception>
+            <exception cref="T:System.RankException"><paramref name="array" /> is multidimensional.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.CopyTo(System.Double[],System.Int32)">
+            <summary>Copies the elements of the vector to a specified array starting at a specified index position.</summary>
+            <param name="array">The destination array.</param>
+            <param name="index">The index at which to copy the first element of the vector.</param>
+            <remarks><paramref name="array" /> must have a sufficient number of elements to accommodate the four vector elements. In other words, elements <paramref name="index" /> through <paramref name="index" /> + 3 must already exist in <paramref name="array" />.</remarks>
+            <exception cref="T:System.NullReferenceException"><paramref name="array" /> is <see langword="null" />.</exception>
+            <exception cref="T:System.ArgumentException">The number of elements in the current instance is greater than in the array.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index" /> is less than zero.
+            -or-
+            <paramref name="index" /> is greater than or equal to the array length.</exception>
+            <exception cref="T:System.RankException"><paramref name="array" /> is multidimensional.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.CopyTo(System.Span{System.Double})">
+            <summary>Copies the vector to the given <see cref="T:System.Span`1" />. The length of the destination span must be at least 4.</summary>
+            <param name="destination">The destination span which the values are copied into.</param>
+            <exception cref="T:System.ArgumentException">If number of elements in source vector is greater than those available in destination span.</exception>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.TryCopyTo(System.Span{System.Double})">
+            <summary>Attempts to copy the vector to the given <see cref="T:System.Span`1" />. The length of the destination span must be at least 4.</summary>
+            <param name="destination">The destination span which the values are copied into.</param>
+            <returns><see langword="true" /> if the source vector was successfully copied to <paramref name="destination" />. <see langword="false" /> if <paramref name="destination" /> is not large enough to hold the source vector.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Equals(ECommons.MathHelpers.Vector4Double)">
+            <summary>Returns a value that indicates whether this instance and another vector are equal.</summary>
+            <param name="other">The other vector.</param>
+            <returns><see langword="true" /> if the two vectors are equal; otherwise, <see langword="false" />.</returns>
+            <remarks>Two vectors are equal if their <see cref="F:System.Numerics.Vector4.X" />, <see cref="F:System.Numerics.Vector4.Y" />, <see cref="F:System.Numerics.Vector4.Z" />, and <see cref="F:System.Numerics.Vector4.W" /> elements are equal.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Equals(System.Object)">
+            <summary>Returns a value that indicates whether this instance and a specified object are equal.</summary>
+            <param name="obj">The object to compare with the current instance.</param>
+            <returns><see langword="true" /> if the current instance and <paramref name="obj" /> are equal; otherwise, <see langword="false" />. If <paramref name="obj" /> is <see langword="null" />, the method returns <see langword="false" />.</returns>
+            <remarks>The current instance and <paramref name="obj" /> are equal if <paramref name="obj" /> is a <see cref="T:System.Numerics.Vector4" /> object and their corresponding elements are equal.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.GetHashCode">
+            <summary>Returns the hash code for this instance.</summary>
+            <returns>The hash code.</returns>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.Length">
+            <summary>Returns the length of this vector object.</summary>
+            <returns>The vector's length.</returns>
+            <altmember cref="M:System.Numerics.Vector4.LengthSquared"/>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.LengthSquared">
+            <summary>Returns the length of the vector squared.</summary>
+            <returns>The vector's length squared.</returns>
+            <remarks>This operation offers better performance than a call to the <see cref="M:System.Numerics.Vector4.Length" /> method.</remarks>
+            <altmember cref="M:System.Numerics.Vector4.Length"/>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.ToString">
+            <summary>Returns the string representation of the current instance using default formatting.</summary>
+            <returns>The string representation of the current instance.</returns>
+            <remarks>This method returns a string in which each element of the vector is formatted using the "G" (general) format string and the formatting conventions of the current thread culture. The "&lt;" and "&gt;" characters are used to begin and end the string, and the current culture's <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property followed by a space is used to separate each element.</remarks>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.ToString(System.String)">
+            <summary>Returns the string representation of the current instance using the specified format string to format individual elements.</summary>
+            <param name="format">A standard or custom numeric format string that defines the format of individual elements.</param>
+            <returns>The string representation of the current instance.</returns>
+            <remarks>This method returns a string in which each element of the vector is formatted using <paramref name="format" /> and the current culture's formatting conventions. The "&lt;" and "&gt;" characters are used to begin and end the string, and the current culture's <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property followed by a space is used to separate each element.</remarks>
+            <related type="Article" href="/dotnet/standard/base-types/standard-numeric-format-strings">Standard Numeric Format Strings</related>
+            <related type="Article" href="/dotnet/standard/base-types/custom-numeric-format-strings">Custom Numeric Format Strings</related>
+        </member>
+        <member name="M:ECommons.MathHelpers.Vector4Double.ToString(System.String,System.IFormatProvider)">
+            <summary>Returns the string representation of the current instance using the specified format string to format individual elements and the specified format provider to define culture-specific formatting.</summary>
+            <param name="format">A standard or custom numeric format string that defines the format of individual elements.</param>
+            <param name="formatProvider">A format provider that supplies culture-specific formatting information.</param>
+            <returns>The string representation of the current instance.</returns>
+            <remarks>This method returns a string in which each element of the vector is formatted using <paramref name="format" /> and <paramref name="formatProvider" />. The "&lt;" and "&gt;" characters are used to begin and end the string, and the format provider's <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property followed by a space is used to separate each element.</remarks>
+            <related type="Article" href="/dotnet/standard/base-types/standard-numeric-format-strings">Standard Numeric Format Strings</related>
+            <related type="Article" href="/dotnet/standard/base-types/custom-numeric-format-strings">Custom Numeric Format Strings</related>
+        </member>
+        <member name="T:ECommons.SplatoonAPI.ElementType">
+            <summary>
+            0: Object at fixed coordinates |
+            1: Object relative to actor position | 
+            2: Line between two fixed coordinates | 
+            3: Line relative to object pos | 
+            4: Cone relative to object position |
+            5: Cone at fixed coordinates
+            </summary>
+        </member>
+        <member name="T:ECommons.SplatoonAPI.RefActorComparisonType">
+            <summary>
+            0: Name |
+            1: Model ID |
+            2: Object ID |
+            3: Data ID | 
+            4: NPC ID |
+            5: Placeholder |
+            6: Name ID | 
+            7: VFX Path
+            </summary>
+        </member>
+        <member name="T:ECommons.SplatoonAPI.RefActorType">
+            0: Game object with specific name |
+            1: Self |
+            2: Targeted enemy
+        </member>
+    </members>
+</doc>

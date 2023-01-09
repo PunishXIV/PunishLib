@@ -8,6 +8,7 @@ using ECommons.ImGuiMethods;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Newtonsoft.Json;
+using PunishLib.Sponsor;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -62,6 +63,7 @@ namespace PunishLib.ImGuiMethods
                 ImGui.SameLine(0, 0);
                 ImGuiEx.Text($" by Puni.sh");
             });
+
             ImGuiHelpers.ScaledDummy(10f);
             ImGuiEx.ImGuiLineCentered("About2", delegate
             {
@@ -91,6 +93,14 @@ namespace PunishLib.ImGuiMethods
                 {
                     ImGui.SetClipboardText("https://love.puni.sh/ment.json");
                     Notify.Success("Link copied to clipboard");
+                }
+                if (SponsorManager.SponsorInfo != null)
+                {
+                    ImGui.SameLine();
+                    if (ImGui.Button("Sponsor"))
+                    {
+                        GenericHelpers.ShellStart(SponsorManager.SponsorInfo.WebsiteURL);
+                    }
                 }
             });
         }

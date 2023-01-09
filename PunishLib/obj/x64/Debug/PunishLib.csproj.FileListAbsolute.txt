@@ -1,0 +1,14 @@
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.csproj.AssemblyReference.cache
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.GeneratedMSBuildEditorConfig.editorconfig
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.AssemblyInfoInputs.cache
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.AssemblyInfo.cs
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.csproj.CoreCompileInputs.cache
+C:\VS\PunishLib\PunishLib\bin\Debug\PunishLib.deps.json
+C:\VS\PunishLib\PunishLib\bin\Debug\PunishLib.dll
+C:\VS\PunishLib\PunishLib\bin\Debug\PunishLib.pdb
+C:\VS\PunishLib\PunishLib\bin\Debug\ECommons.dll
+C:\VS\PunishLib\PunishLib\bin\Debug\ECommons.pdb
+C:\VS\PunishLib\PunishLib\bin\Debug\ECommons.xml
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.csproj.CopyComplete
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.dll
+C:\VS\PunishLib\PunishLib\obj\x64\Debug\PunishLib.pdb

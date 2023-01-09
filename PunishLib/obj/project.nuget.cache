@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "VEkFTxVsd05K0mVe0vc9a+JAUAgY/6yxeSMxVOoDe9tR0tYX/QbC7Rd/p4cQPZx/1l+l0Iu6t8z1BPBJVbHGNg==",
+  "success": true,
+  "projectFilePath": "C:\\VS\\PunishLib\\PunishLib\\PunishLib.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\LSS\\.nuget\\packages\\ecommons\\1.0.0.2\\ecommons.1.0.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
