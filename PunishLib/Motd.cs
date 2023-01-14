@@ -1,7 +1,6 @@
 ﻿using Dalamud.Game;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Logging;
-using ECommons.DalamudServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace PunishLib
 {
     public static class Motd
     {
-        const string GUID = "/f4a0ec2c-620e-411c-a7b7-bb10972d417a";
+        /*const string GUID = "/f4a0ec2c-620e-411c-a7b7-bb10972d417a";
         public static void PrintOnce()
         {
             return;
@@ -38,6 +37,6 @@ namespace PunishLib
                     Message = new SeStringBuilder().AddUiForeground("Hello, you should see this message only once", 41).Build()
                 });
             }
-        }
+        }*/
     }
 }

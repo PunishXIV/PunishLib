@@ -1,16 +1,15 @@
 ﻿using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using ECommons;
-using ECommons.DalamudServices;
-using ECommons.ImGuiMethods;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using Newtonsoft.Json;
 using PunishLib.Sponsor;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,8 +30,8 @@ namespace PunishLib.ImGuiMethods
                 PluginManifest = new();
                 GenericHelpers.Safe(delegate
                 {
-                    var path = Path.Combine(Svc.PluginInterface.AssemblyLocation.DirectoryName,
-                        $"{Path.GetFileNameWithoutExtension(Svc.PluginInterface.AssemblyLocation.FullName)}.json");
+                    var path = Path.Combine(PunishLibMain.PluginInterface.AssemblyLocation.DirectoryName,
+                        $"{Path.GetFileNameWithoutExtension(PunishLibMain.PluginInterface.AssemblyLocation.FullName)}.json");
                     PluginLog.Debug($"Path: {path}");
                     PluginManifest = JsonConvert.DeserializeObject<MiniManifest>(File.ReadAllText(path));
                 });
@@ -68,7 +67,7 @@ namespace PunishLib.ImGuiMethods
             {
                 if (ThreadLoadImageHandler.TryGetTextureWrap(GetImageURL(), out var texture))
                 {
-                    ImGui.Image(texture.ImGuiHandle, new(200, 200));
+                    ImGui.Image(texture.ImGuiHandle, new(200f, 200f));
                 }
             });
             ImGuiHelpers.ScaledDummy(10f);
@@ -79,26 +78,34 @@ namespace PunishLib.ImGuiMethods
                     GenericHelpers.ShellStart("https://discord.gg/Zzrcc8kmvy");
                 }
                 ImGui.SameLine();*/
-                ImGuiEx.TextWrapped("Join our Discord community for project announcements, updates, and support.");
+                ImGui.TextWrapped("Join our Discord community for project announcements, updates, and support.");
             });
             ImGuiEx.ImGuiLineCentered("About4", delegate
             {
                 if (ImGui.Button("Discord"))
                 {
-                    GenericHelpers.ShellStart("https://discord.gg/Zzrcc8kmvy");
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = "https://discord.gg/Zzrcc8kmvy",
+                        UseShellExecute = true
+                    }); 
                 }
                 ImGui.SameLine();
                 if (ImGui.Button("Repository"))
                 {
                     ImGui.SetClipboardText("https://love.puni.sh/ment.json");
-                    Notify.Success("Link copied to clipboard");
+                    PunishLibMain.PluginInterface.UiBuilder.AddNotification("Link copied to clipboard", PunishLibMain.PluginName, NotificationType.Success);
                 }
                 if (SponsorManager.SponsorInfo != null)
                 {
                     ImGui.SameLine();
                     if (ImGui.Button("Sponsor"))
                     {
-                        GenericHelpers.ShellStart(SponsorManager.SponsorInfo.WebsiteURL);
+                        Process.Start(new ProcessStartInfo()
+                        {
+                            FileName = SponsorManager.SponsorInfo.WebsiteURL,
+                            UseShellExecute = true
+                        });
                     }
                 }
             });
