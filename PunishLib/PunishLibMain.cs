@@ -1,5 +1,5 @@
 ﻿using Dalamud.Plugin;
-using ECommons;
+
 using PunishLib.Sponsor;
 using System;
 using System.Collections.Generic;
@@ -11,14 +11,13 @@ namespace PunishLib
 {
     public class PunishLibMain
     {
-        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, params Module[] modules)
-        {
-            ECommonsMain.Init(pluginInterface, instance, modules);
-        }
+        internal static string PluginName = "";
+        internal static DalamudPluginInterface PluginInterface;
 
-        public static void Dispose()
+        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance)
         {
-            ECommonsMain.Dispose();
+            PluginName = instance.Name;
+            PluginInterface = pluginInterface;
         }
     }
 }
