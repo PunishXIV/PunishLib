@@ -19,5 +19,7 @@ namespace PunishLib
             PluginName = instance.Name;
             PluginInterface = pluginInterface;
         }
+
+        public static void Dispose() { }
     }
 }
