@@ -43,6 +43,7 @@ namespace PunishLib.ImGuiMethods
         class MiniManifest
         {
             public string IconUrl = "";
+            public string RepoUrl = "";
         }
 
         public static void Draw(IDalamudPlugin P)
