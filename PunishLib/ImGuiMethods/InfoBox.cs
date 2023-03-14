@@ -7,6 +7,8 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 namespace PunishLib.ImGuiMethods
 {
@@ -136,13 +138,14 @@ namespace PunishLib.ImGuiMethods
         }
 
         internal static Dictionary<string, InfoBox> InfoBoxCache = new();
+        public static ReadOnlyDictionary<string, InfoBox> InfoBoxCacheRO => new(InfoBoxCache);
         public static void DrawBox(string label, Action action)
         {
-            if (!InfoBoxCache.ContainsKey(label))
+            if (!InfoBoxCache.ContainsKey($"{label}"))
             {
                 InfoBoxCache[label] = new()
                 {
-                    Label = label,
+                    Label = label.Split($"##")[0],
                     ContentsAction = action
                 };
             }
