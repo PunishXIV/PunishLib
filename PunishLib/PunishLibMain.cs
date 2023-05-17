@@ -1,8 +1,10 @@
-﻿using Dalamud.Plugin;
-
-using PunishLib.Sponsor;
+﻿using Dalamud.Logging;
+using Dalamud.Plugin;
+using Newtonsoft.Json;
+using PunishLib.ImGuiMethods;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +15,22 @@ namespace PunishLib
     {
         internal static string PluginName = "";
         internal static DalamudPluginInterface PluginInterface;
+        internal static PluginManifest PluginManifest;
+        internal static AboutPlugin About;
 
-        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance)
+        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, AboutPlugin about = null)
         {
             PluginName = instance.Name;
             PluginInterface = pluginInterface;
+            PluginManifest = new();
+            About = about ?? new();
+            GenericHelpers.Safe(delegate
+            {
+                var path = Path.Combine(PunishLibMain.PluginInterface.AssemblyLocation.DirectoryName,
+                    $"{Path.GetFileNameWithoutExtension(PunishLibMain.PluginInterface.AssemblyLocation.FullName)}.json");
+                PluginLog.Debug($"Path: {path}");
+                PluginManifest = JsonConvert.DeserializeObject<PluginManifest>(File.ReadAllText(path));
+            });
         }
 
         public static void Dispose() { }
