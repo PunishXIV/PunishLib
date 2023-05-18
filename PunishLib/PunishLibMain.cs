@@ -39,7 +39,7 @@ namespace PunishLib
             }
         }
 
-        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, params PunishOption[] opts) => Init(pluginInterface, instance, opts);
+        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, params PunishOption[] opts) => Init(pluginInterface, instance, null, opts);
 
         public static void Dispose() { }
     }
