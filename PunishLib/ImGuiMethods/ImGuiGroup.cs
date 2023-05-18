@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PunishLib.ImGuiMethods
 {
-    internal static partial class ImGuiGroup
+    public static partial class ImGuiGroup
     {
         public record GroupBoxOptions
         {
