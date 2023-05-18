@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace PunishLib
 {
-    public record class AboutPlugin
+    public class AboutPlugin
     {
-        public string Sponsor { get; init; }
-        public string Developer { get; init; }
+        public string Sponsor { get; set; }
+        public string Developer { get; set; }
 
-        public Action WithLoveBy => Developer == null ? WithLoveByPunish : WithLoveByOther;
+        internal Action WithLoveBy => Developer == null ? WithLoveByPunish : WithLoveByOther;
 
         static void WithLoveByPunish()
         {

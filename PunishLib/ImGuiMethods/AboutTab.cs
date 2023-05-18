@@ -17,10 +17,8 @@ using System.Web;
 
 namespace PunishLib.ImGuiMethods
 {
-    public static partial class AboutTab
+    public static class AboutTab
     {
-        const string DefaultDonateURL = "https://ko-fi.com/spetsnaz";
-
         static string GetImageURL()
         {
             return PunishLibMain.PluginManifest.IconUrl ?? "";
@@ -81,14 +79,17 @@ namespace PunishLib.ImGuiMethods
                         }); 
                     }
                 }
-                ImGui.SameLine();
-                if (ImGui.Button("Sponsor"))
+                if (PunishLibMain.About.Sponsor != null)
                 {
-                    Process.Start(new ProcessStartInfo()
+                    ImGui.SameLine();
+                    if (ImGui.Button("Sponsor"))
                     {
-                        FileName = PunishLibMain.About.Sponsor ?? DefaultDonateURL,
-                        UseShellExecute = true
-                    });
+                        Process.Start(new ProcessStartInfo()
+                        {
+                            FileName = PunishLibMain.About.Sponsor,
+                            UseShellExecute = true
+                        });
+                    }
                 }
             });
         }

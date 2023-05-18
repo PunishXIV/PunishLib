@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
+using File = System.IO.File;
 
 namespace PunishLib
 {
@@ -18,7 +20,7 @@ namespace PunishLib
         internal static PluginManifest PluginManifest;
         internal static AboutPlugin About;
 
-        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, AboutPlugin about = null)
+        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, AboutPlugin about = null, params PunishOption[] opts)
         {
             PluginName = instance.Name;
             PluginInterface = pluginInterface;
@@ -31,7 +33,13 @@ namespace PunishLib
                 PluginLog.Debug($"Path: {path}");
                 PluginManifest = JsonConvert.DeserializeObject<PluginManifest>(File.ReadAllText(path));
             });
+            if (opts.Contains(PunishOption.DefaultKoFi))
+            {
+                About.Sponsor = "https://ko-fi.com/spetsnaz";
+            }
         }
+
+        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, params PunishOption[] opts) => Init(pluginInterface, instance, opts);
 
         public static void Dispose() { }
     }
