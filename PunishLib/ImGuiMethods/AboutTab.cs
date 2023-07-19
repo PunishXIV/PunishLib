@@ -12,7 +12,7 @@ namespace PunishLib.ImGuiMethods
 {
     public static class AboutTab
     {
-        private static string _inputKey = PunishLibMain.PunishConfig.APIKey;
+        private static string _inputKey = PunishLibMain.PunishConfig.APIKey ?? string.Empty;
         private static bool openApiSettings = false;
         private static bool showKeyError = false;
         private static bool showSuccess = false;
