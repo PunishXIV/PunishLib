@@ -1,24 +1,22 @@
 ﻿using Dalamud.Interface;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.Notifications;
-using Dalamud.Logging;
 using Dalamud.Plugin;
+using ECommons.Automation;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
+using System.Text.RegularExpressions;
 
 namespace PunishLib.ImGuiMethods
 {
     public static class AboutTab
     {
+        private static string _inputKey = string.Empty;
+        private static bool openApiSettings = false;
+        private static bool showKeyError = false;
+        private static bool showSuccess = false;
+
         static string GetImageURL()
         {
             return PunishLibMain.PluginManifest.IconUrl ?? "";
@@ -59,7 +57,7 @@ namespace PunishLib.ImGuiMethods
                     {
                         FileName = "https://discord.gg/Zzrcc8kmvy",
                         UseShellExecute = true
-                    }); 
+                    });
                 }
                 ImGui.SameLine();
                 if (ImGui.Button("Repository"))
@@ -67,7 +65,7 @@ namespace PunishLib.ImGuiMethods
                     ImGui.SetClipboardText("https://love.puni.sh/ment.json");
                     PunishLibMain.PluginInterface.UiBuilder.AddNotification("Link copied to clipboard", PunishLibMain.PluginName, NotificationType.Success);
                 }
-                if(PunishLibMain.PluginManifest.RepoUrl != null)
+                if (PunishLibMain.PluginManifest.RepoUrl != null)
                 {
                     ImGui.SameLine();
                     if (ImGui.Button("Source Code"))
@@ -76,7 +74,7 @@ namespace PunishLib.ImGuiMethods
                         {
                             FileName = PunishLibMain.PluginManifest.RepoUrl,
                             UseShellExecute = true
-                        }); 
+                        });
                     }
                 }
                 if (PunishLibMain.About.Sponsor != null)
@@ -90,6 +88,58 @@ namespace PunishLib.ImGuiMethods
                             UseShellExecute = true
                         });
                     }
+                }
+
+                ImGui.SameLine();
+                if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
+                {
+                    openApiSettings = true;
+                }
+
+                if (openApiSettings)
+                {
+                    ImGuiHelpers.ForceNextWindowMainViewport();
+                    ImGui.SetNextWindowSize(new System.Numerics.Vector2(200, 300), ImGuiCond.Once);
+                    ImGui.Begin($"Puni.sh API Key Settings", ref openApiSettings, ImGuiWindowFlags.AlwaysAutoResize);
+                    ImGui.Text("API Key");
+                    if (showKeyError)
+                        ImGuiEx.Text(ImGuiColors.DalamudRed, "ERROR - Invalid API Key");
+
+                    if (showSuccess)
+                        ImGuiEx.Text(ImGuiColors.HealerGreen, "Success - Your key has been saved.");
+
+                    ImGui.PushItemWidth(300);
+                    if (ImGui.InputText("", ref _inputKey, 100))
+                    {
+                        showKeyError = false;
+                        showSuccess = false;
+                    }
+
+                    if (ImGui.Button("Diagnostics Export"))
+                    {
+
+                    }
+
+                    ImGui.SameLine();
+                    if (ImGuiComponents.IconButton(FontAwesomeIcon.Save))
+                    {
+                        Regex uuidPattern = new Regex("[a-fA-F\\d]{8}(?:\\-[a-fA-F\\d]{4}){3}\\-[a-fA-F\\d]{12}$");
+                        if (uuidPattern.IsMatch(_inputKey))
+                        {
+                            showKeyError = false;
+                            showSuccess = true;
+
+                            PunishLibMain.PunishConfig.APIKey = _inputKey;
+                            PunishLibMain.PunishConfig.Save();
+                        }
+                        else
+                        {
+                            showSuccess = false;
+                            showKeyError = true;
+                        }
+
+                    }
+                    ImGui.End();
                 }
             });
         }

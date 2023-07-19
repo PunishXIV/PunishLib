@@ -19,6 +19,7 @@ namespace PunishLib
         internal static DalamudPluginInterface PluginInterface;
         internal static PluginManifest PluginManifest;
         internal static AboutPlugin About;
+        public static PunishConfig PunishConfig;
 
         public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, AboutPlugin about = null, params PunishOption[] opts)
         {
@@ -26,6 +27,7 @@ namespace PunishLib
             PluginInterface = pluginInterface;
             PluginManifest = new();
             About = about ?? new();
+            PunishConfig = PunishConfigMethods.Load();
             GenericHelpers.Safe(delegate
             {
                 var path = Path.Combine(PunishLibMain.PluginInterface.AssemblyLocation.DirectoryName,
