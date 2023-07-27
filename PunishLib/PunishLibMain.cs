@@ -1,6 +1,7 @@
 ﻿using Dalamud.Logging;
 using Dalamud.Plugin;
 using Newtonsoft.Json;
+using PunishLib.Configuration;
 using PunishLib.ImGuiMethods;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace PunishLib
         internal static PluginManifest PluginManifest;
         internal static AboutPlugin About;
         public static PunishConfig PunishConfig;
+        internal static SharedConfig SharedConfig;
 
         public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, AboutPlugin about = null, params PunishOption[] opts)
         {
@@ -28,6 +30,7 @@ namespace PunishLib
             PluginManifest = new();
             About = about ?? new();
             PunishConfig = PunishConfigMethods.Load();
+            SharedConfig = new();
             GenericHelpers.Safe(delegate
             {
                 var path = Path.Combine(PunishLibMain.PluginInterface.AssemblyLocation.DirectoryName,

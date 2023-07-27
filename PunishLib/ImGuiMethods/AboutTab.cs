@@ -3,7 +3,6 @@ using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Plugin;
-using ECommons.Automation;
 using ImGuiNET;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -12,7 +11,7 @@ namespace PunishLib.ImGuiMethods
 {
     public static class AboutTab
     {
-        private static string _inputKey = PunishLibMain.PunishConfig.APIKey ?? string.Empty;
+        private static string _inputKey = PunishLibMain.SharedConfig.APIKey;
         private static bool openApiSettings = false;
         private static bool showKeyError = false;
         private static bool showSuccess = false;
@@ -129,8 +128,7 @@ namespace PunishLib.ImGuiMethods
                             showKeyError = false;
                             showSuccess = true;
 
-                            PunishLibMain.PunishConfig.APIKey = _inputKey;
-                            PunishLibMain.PunishConfig.Save();
+                            PunishLibMain.SharedConfig.APIKey = _inputKey;
                         }
                         else
                         {
