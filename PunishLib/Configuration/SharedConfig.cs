@@ -10,10 +10,12 @@ namespace PunishLib.Configuration
 {
     internal class SharedConfig
     {
-        internal static string FilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PunishConfig", "PunishSSharedConfig.json");
+        internal static string FileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PunishConfig");
+        internal static string FilePath => Path.Combine(FileDir, "PunishSharedConfig.json");
         internal SharedConfigStorage Storage;
         internal SharedConfig() 
         {
+            Directory.CreateDirectory(FileDir);
             Storage = EzConfig.LoadConfiguration<SharedConfigStorage>(FilePath, false);
             foreach (var x in Storage.Bools) PunishLibMain.PluginInterface.GetOrCreateData<List<bool>>($"PunishLib.{(int)x.Key}", () => new() { x.Value });
             foreach (var x in Storage.Strings) PunishLibMain.PluginInterface.GetOrCreateData<List<string>>($"PunishLib.{(int)x.Key}", () => new() { x.Value });
