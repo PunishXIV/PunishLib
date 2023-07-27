@@ -8,7 +8,7 @@ namespace PunishLib.Configuration
 {
     public class SharedConfigStorage : IEzConfig
     {
-        public Dictionary<SharedConfigKey, string> Strings = new();
-        public Dictionary<SharedConfigKey, bool> Bools = new();
+        public Dictionary<int, string> Strings = new();
+        public Dictionary<int, bool> Bools = new();
     }
 }

@@ -49,8 +49,8 @@ namespace PunishLib.Configuration
         {
             var data = PunishLibMain.PluginInterface.GetOrCreateData<List<T>>($"PunishLib.{(int)key}", () => new() { value });
             data[0] = value;
-            if (value is bool b) Storage.Bools[key] = b;
-            if (value is string s) Storage.Strings[key] = s;
+            if (value is bool b) Storage.Bools[(int)key] = b;
+            if (value is string s) Storage.Strings[(int)key] = s;
             EzConfig.SaveConfiguration(Storage, FilePath, true, false);
         }
     }
