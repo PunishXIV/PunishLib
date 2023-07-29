@@ -39,6 +39,17 @@ namespace PunishLib.Configuration
             set => Set(SharedConfigKey.UnsupportedConfiguration, value);
         }
 
+        internal string InstalledPlugins
+        {
+            get => Get(SharedConfigKey.InstalledPlugins, "");
+            set => Set(SharedConfigKey.InstalledPlugins, value);
+        }
+        internal string ClientLanguage
+        {
+            get => Get(SharedConfigKey.ClientLanguage, "");
+            set => Set(SharedConfigKey.ClientLanguage, value);
+        }
+
         T Get<T>(SharedConfigKey key, T defaultValue = default)
         {
             var data = PunishLibMain.PluginInterface.GetOrCreateData<List<T>>($"PunishLib.{(int)key}", () => new() { defaultValue });

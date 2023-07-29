@@ -10,6 +10,8 @@ namespace PunishLib.Configuration
     {
         APIKey,
         FFXIVGameVersion,
-        UnsupportedConfiguration
+        UnsupportedConfiguration,
+        InstalledPlugins,
+        ClientLanguage
     }
 }

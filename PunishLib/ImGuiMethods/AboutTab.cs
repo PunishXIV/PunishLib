@@ -1,10 +1,19 @@
-﻿using Dalamud.Interface;
+﻿using Dalamud;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Logging;
 using Dalamud.Plugin;
+using ECommons;
+using ECommons.DalamudServices;
+using ECommons.Reflection;
 using ImGuiNET;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace PunishLib.ImGuiMethods
@@ -15,6 +24,12 @@ namespace PunishLib.ImGuiMethods
         private static bool openApiSettings = false;
         private static bool showKeyError = false;
         private static bool showSuccess = false;
+        private static bool apiTestSuccess = false;
+        private static bool apiTestFail = false;
+        private static bool disableTestButton = false;
+        private static List<string> testedKeys = new();
+        private static DalamudStartInfo startInfo;
+        private static List<LocalPluginInfo> installedPluginInfo = new(); 
 
         static string GetImageURL()
         {
@@ -107,15 +122,49 @@ namespace PunishLib.ImGuiMethods
                     if (showSuccess)
                         ImGuiEx.Text(ImGuiColors.HealerGreen, "Success - Your key has been saved.");
 
+                    if (apiTestSuccess)
+                        ImGuiEx.Text(ImGuiColors.HealerGreen, "Success - You have a valid API key.");
+
+                    if (apiTestFail)
+                        ImGuiEx.Text(ImGuiColors.DalamudRed, "ERROR - Your API key is invalid.");
+
                     ImGui.PushItemWidth(300);
                     if (ImGui.InputText("", ref _inputKey, 100))
                     {
                         showKeyError = false;
                         showSuccess = false;
+                        apiTestFail = false;
+                        apiTestSuccess = false;
+
+                        disableTestButton = true;
                     }
 
                     if (ImGui.Button("Diagnostics Export"))
                     {
+                        if (DalamudReflector.TryGetDalamudStartInfo(out startInfo, Svc.PluginInterface))
+                        PunishLibMain.SharedConfig.FFXIVGameVersion = startInfo.GameVersion?.ToString();
+
+                        var pluginManager = DalamudReflector.GetPluginManager();
+                        var installedPlugins = (System.Collections.IList)pluginManager.GetType().GetProperty("InstalledPlugins").GetValue(pluginManager);
+
+                        installedPluginInfo.Clear();
+                        foreach (var i in installedPlugins)
+                        {
+                            try
+                            {
+                                LocalPluginInfo plugin = new();
+                                plugin.Name = (string)i.GetType().GetProperty("Name").GetValue(i);
+                                plugin.Version = i.GetType().GetProperty("EffectiveVersion").GetValue(i).ToString();
+
+                                installedPluginInfo.Add(plugin);
+                            }
+                            catch (Exception ex)
+                            {
+                                ex.Log();
+                            }
+                        }
+                        PunishLibMain.SharedConfig.InstalledPlugins = JsonConvert.SerializeObject(installedPluginInfo);
+                        PunishLibMain.SharedConfig.ClientLanguage = Svc.ClientState.ClientLanguage.ToString();
 
                     }
 
@@ -128,6 +177,8 @@ namespace PunishLib.ImGuiMethods
                             showKeyError = false;
                             showSuccess = true;
 
+                            disableTestButton = false;
+
                             PunishLibMain.SharedConfig.APIKey = _inputKey;
                         }
                         else
@@ -137,9 +188,46 @@ namespace PunishLib.ImGuiMethods
                         }
 
                     }
+
+                    ImGui.SameLine();
+
+                    if (disableTestButton)
+                        ImGui.BeginDisabled();
+
+                    if (IconButtons.IconTextButton(FontAwesomeIcon.Question, "Test Key"))
+                    {
+                        if (!string.IsNullOrEmpty(PunishLibMain.SharedConfig.APIKey))
+                        {
+                            if (!testedKeys.Any(x => x == PunishLibMain.SharedConfig.APIKey))
+                            {
+                                testedKeys.Add(PunishLibMain.SharedConfig.APIKey);
+                                if (API.API.ValidateKey().Result)
+                                {
+                                    apiTestSuccess = true;
+                                    apiTestFail = false;
+                                }
+                                else
+                                {
+                                    apiTestSuccess = false;
+                                    apiTestFail = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (disableTestButton)
+                        ImGui.EndDisabled();
+
                     ImGui.End();
                 }
             });
+        }
+
+        private class LocalPluginInfo
+        {
+            public string Name { get; set; } 
+
+            public string Version { get; set; }
         }
     }
 }
