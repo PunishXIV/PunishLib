@@ -29,7 +29,8 @@ namespace PunishLib.ImGuiMethods
         private static bool disableTestButton = false;
         private static List<string> testedKeys = new();
         private static DalamudStartInfo startInfo;
-        private static List<LocalPluginInfo> installedPluginInfo = new(); 
+        private static List<LocalPluginInfo> installedPluginInfo = new();
+        private static Regex uuidPattern = new Regex("[a-fA-F\\d]{8}(?:\\-[a-fA-F\\d]{4}){3}\\-[a-fA-F\\d]{12}$");
 
         static string GetImageURL()
         {
@@ -105,9 +106,20 @@ namespace PunishLib.ImGuiMethods
                 }
 
                 ImGui.SameLine();
-                if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog))
+                if (ImGuiComponents.IconButton(FontAwesomeIcon.Cog) && !openApiSettings)
                 {
                     openApiSettings = true;
+                    _inputKey = PunishLibMain.SharedConfig.APIKey;
+
+                    if (uuidPattern.IsMatch(_inputKey))
+                    {
+                        showKeyError = false;
+                        showSuccess = false;
+                        apiTestFail = false;
+                        apiTestSuccess = false;
+
+                        disableTestButton = false;
+                    }
                 }
 
                 if (openApiSettings)
@@ -171,7 +183,6 @@ namespace PunishLib.ImGuiMethods
                     ImGui.SameLine();
                     if (ImGuiComponents.IconButton(FontAwesomeIcon.Save))
                     {
-                        Regex uuidPattern = new Regex("[a-fA-F\\d]{8}(?:\\-[a-fA-F\\d]{4}){3}\\-[a-fA-F\\d]{12}$");
                         if (uuidPattern.IsMatch(_inputKey))
                         {
                             showKeyError = false;

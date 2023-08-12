@@ -12,7 +12,7 @@ namespace PunishLib.API
 {
     internal static class API
     {
-        internal static string APITestEndPoint = "https://beta.puni.sh/api/test/auth?authKey=";
+        internal static string APITestEndPoint = "https://puni.sh/api/test/auth?authKey=";
         public async static Task<bool> ValidateKey()
         {
             using HttpResponseMessage responseMessage = await Dalamud.Utility.Util.HttpClient.GetAsync(APITestEndPoint + PunishLibMain.SharedConfig.APIKey);
