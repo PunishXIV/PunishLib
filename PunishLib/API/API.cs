@@ -15,7 +15,7 @@ namespace PunishLib.API
         internal static string APITestEndPoint = "https://puni.sh/api/test/auth?authKey=";
         public async static Task<bool> ValidateKey()
         {
-            using HttpResponseMessage responseMessage = await Dalamud.Utility.Util.HttpClient.GetAsync(APITestEndPoint + PunishLibMain.SharedConfig.APIKey);
+            using HttpResponseMessage responseMessage = await new HttpClient().GetAsync(APITestEndPoint + PunishLibMain.SharedConfig.APIKey);
             PluginLog.Debug($"{responseMessage.StatusCode} {responseMessage.ReasonPhrase}");
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
