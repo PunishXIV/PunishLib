@@ -23,9 +23,9 @@ namespace PunishLib
         public static PunishConfig PunishConfig;
         internal static SharedConfig SharedConfig;
 
-        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, AboutPlugin about = null, params PunishOption[] opts)
+        public static void Init(DalamudPluginInterface pluginInterface, string pluginName, AboutPlugin about = null, params PunishOption[] opts)
         {
-            PluginName = instance.Name;
+            PluginName = pluginName;
             PluginInterface = pluginInterface;
             PluginManifest = new();
             About = about ?? new();
@@ -44,7 +44,7 @@ namespace PunishLib
             }
         }
 
-        public static void Init(DalamudPluginInterface pluginInterface, IDalamudPlugin instance, params PunishOption[] opts) => Init(pluginInterface, instance, null, opts);
+        public static void Init(DalamudPluginInterface pluginInterface, string pluginName, params PunishOption[] opts) => Init(pluginInterface, pluginName, null, opts);
 
         public static void Dispose() { }
     }

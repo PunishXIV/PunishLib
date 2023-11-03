@@ -1,4 +1,5 @@
-﻿using Dalamud.Logging;
+﻿using Dalamud.Interface.Internal;
+using Dalamud.Logging;
 using ImGuiScene;
 using System;
 using System.Collections.Concurrent;
@@ -17,7 +18,7 @@ public class ThreadLoadImageHandler
         Timeout = TimeSpan.FromSeconds(10),
     };
 
-    public static bool TryGetTextureWrap(string url, out TextureWrap textureWrap)
+    public static bool TryGetTextureWrap(string url, out IDalamudTextureWrap textureWrap)
     {
         ImageLoadingResult result;
         if(!CachedTextures.TryGetValue(url, out result))

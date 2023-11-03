@@ -67,5 +67,9 @@
 			<HintPath>$(DalamudLibPath)PInvoke.Windows.Core.dll</HintPath>
 			<Private>False</Private>
 		</Reference>
+		<Reference Include="Dalamud.Common">
+			<HintPath>$(DalamudLibPath)Dalamud.Common.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
 	</ItemGroup>
 </Project>

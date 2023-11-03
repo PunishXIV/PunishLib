@@ -1,8 +1,10 @@
 ﻿using Dalamud;
+using Dalamud.Common;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Interface.Utility;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using ECommons;
@@ -37,11 +39,11 @@ namespace PunishLib.ImGuiMethods
             return PunishLibMain.PluginManifest.IconUrl ?? "";
         }
 
-        public static void Draw(IDalamudPlugin P)
+        public static void Draw(string pluginName)
         {
             ImGuiEx.ImGuiLineCentered("About1", delegate
             {
-                ImGuiEx.Text($"{P.Name} - {PunishLibMain.PluginManifest.AssemblyVersion}");
+                ImGuiEx.Text($"{pluginName} - {PunishLibMain.PluginManifest.AssemblyVersion}");
             });
 
             PunishLibMain.About.WithLoveBy();
