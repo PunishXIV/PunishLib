@@ -7,9 +7,9 @@ using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Interface.Utility;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using ECommons;
-using ECommons.DalamudServices;
-using ECommons.Reflection;
+//using ECommons;
+//using ECommons.DalamudServices;
+//using ECommons.Reflection;
 using ImGuiNET;
 using Newtonsoft.Json;
 using System;
@@ -153,36 +153,37 @@ namespace PunishLib.ImGuiMethods
                         disableTestButton = true;
                     }
 
-                    if (ImGui.Button("Diagnostics Export"))
-                    {
-                        if (DalamudReflector.TryGetDalamudStartInfo(out startInfo, Svc.PluginInterface))
-                        PunishLibMain.SharedConfig.FFXIVGameVersion = startInfo.GameVersion?.ToString();
+                    //if (ImGui.Button("Diagnostics Export"))
+                    //{
+                    //    if (DalamudReflector.TryGetDalamudStartInfo(out startInfo, Svc.PluginInterface))
+                    //    PunishLibMain.SharedConfig.FFXIVGameVersion = startInfo.GameVersion?.ToString();
 
-                        var pluginManager = DalamudReflector.GetPluginManager();
-                        var installedPlugins = (System.Collections.IList)pluginManager.GetType().GetProperty("InstalledPlugins").GetValue(pluginManager);
+                    //    var pluginManager = DalamudReflector.GetPluginManager();
+                    //    var installedPlugins = (System.Collections.IList)pluginManager.GetType().GetProperty("InstalledPlugins").GetValue(pluginManager);
 
-                        installedPluginInfo.Clear();
-                        foreach (var i in installedPlugins)
-                        {
-                            try
-                            {
-                                LocalPluginInfo plugin = new();
-                                plugin.Name = (string)i.GetType().GetProperty("Name").GetValue(i);
-                                plugin.Version = i.GetType().GetProperty("EffectiveVersion").GetValue(i).ToString();
+                    //    installedPluginInfo.Clear();
+                    //    foreach (var i in installedPlugins)
+                    //    {
+                    //        try
+                    //        {
+                    //            LocalPluginInfo plugin = new();
+                    //            plugin.Name = (string)i.GetType().GetProperty("Name").GetValue(i);
+                    //            plugin.Version = i.GetType().GetProperty("EffectiveVersion").GetValue(i).ToString();
 
-                                installedPluginInfo.Add(plugin);
-                            }
-                            catch (Exception ex)
-                            {
-                                ex.Log();
-                            }
-                        }
-                        PunishLibMain.SharedConfig.InstalledPlugins = JsonConvert.SerializeObject(installedPluginInfo);
-                        PunishLibMain.SharedConfig.ClientLanguage = Svc.ClientState.ClientLanguage.ToString();
+                    //            installedPluginInfo.Add(plugin);
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            ex.Log();
+                    //        }
+                    //    }
+                    //    PunishLibMain.SharedConfig.InstalledPlugins = JsonConvert.SerializeObject(installedPluginInfo);
+                    //    PunishLibMain.SharedConfig.ClientLanguage = Svc.ClientState.ClientLanguage.ToString();
 
-                    }
+                    //}
 
-                    ImGui.SameLine();
+                    //ImGui.SameLine();
+
                     if (ImGuiComponents.IconButton(FontAwesomeIcon.Save))
                     {
                         if (uuidPattern.IsMatch(_inputKey))
