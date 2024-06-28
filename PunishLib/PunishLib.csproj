@@ -27,9 +27,9 @@
         <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
     </PropertyGroup>
 
-    <!--<ItemGroup>
-        <ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
-    </ItemGroup>-->
+    <ItemGroup>
+        <ProjectReference Include="..\..\ECommons\ECommons\ECommons.csproj" />
+    </ItemGroup>
 
     <ItemGroup>
         <Reference Include="Newtonsoft.Json">

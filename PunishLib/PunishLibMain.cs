@@ -1,5 +1,6 @@
 ﻿using Dalamud.Logging;
 using Dalamud.Plugin;
+using ECommons.DalamudServices;
 using Newtonsoft.Json;
 using PunishLib.Configuration;
 using PunishLib.ImGuiMethods;
@@ -35,7 +36,7 @@ namespace PunishLib
             {
                 var path = Path.Combine(PunishLibMain.PluginInterface.AssemblyLocation.DirectoryName,
                     $"{Path.GetFileNameWithoutExtension(PunishLibMain.PluginInterface.AssemblyLocation.FullName)}.json");
-                PluginLog.Debug($"Path: {path}");
+                Svc.Log.Debug($"Path: {path}");
                 PluginManifest = JsonConvert.DeserializeObject<PluginManifest>(File.ReadAllText(path));
             });
             if (opts.Contains(PunishOption.DefaultKoFi))

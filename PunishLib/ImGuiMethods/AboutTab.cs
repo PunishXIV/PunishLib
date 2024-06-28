@@ -3,10 +3,14 @@ using Dalamud.Common;
 using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
-using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.Utility;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using ECommons.DalamudServices;
+using ECommons.ImGuiMethods;
+
+
 //using ECommons;
 //using ECommons.DalamudServices;
 //using ECommons.Reflection;
@@ -80,7 +84,7 @@ namespace PunishLib.ImGuiMethods
                 if (ImGui.Button("Repository"))
                 {
                     ImGui.SetClipboardText("https://love.puni.sh/ment.json");
-                    PunishLibMain.PluginInterface.UiBuilder.AddNotification("Link copied to clipboard", PunishLibMain.PluginName, NotificationType.Success);
+                    Notify.Success("Link copied to clipboard");
                 }
                 if (PunishLibMain.PluginManifest.RepoUrl != null)
                 {
