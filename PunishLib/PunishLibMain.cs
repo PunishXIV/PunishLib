@@ -18,13 +18,13 @@ namespace PunishLib
     public class PunishLibMain
     {
         internal static string PluginName = "";
-        internal static DalamudPluginInterface PluginInterface;
+        internal static IDalamudPluginInterface PluginInterface;
         internal static PluginManifest PluginManifest;
         internal static AboutPlugin About;
         public static PunishConfig PunishConfig;
         internal static SharedConfig SharedConfig;
 
-        public static void Init(DalamudPluginInterface pluginInterface, string pluginName, AboutPlugin about = null, params PunishOption[] opts)
+        public static void Init(IDalamudPluginInterface pluginInterface, string pluginName, AboutPlugin about = null, params PunishOption[] opts)
         {
             PluginName = pluginName;
             PluginInterface = pluginInterface;
@@ -45,7 +45,7 @@ namespace PunishLib
             }
         }
 
-        public static void Init(DalamudPluginInterface pluginInterface, string pluginName, params PunishOption[] opts) => Init(pluginInterface, pluginName, null, opts);
+        public static void Init(IDalamudPluginInterface pluginInterface, string pluginName, params PunishOption[] opts) => Init(pluginInterface, pluginName, null, opts);
 
         public static void Dispose() { }
     }

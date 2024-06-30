@@ -1,4 +1,5 @@
 ﻿using Dalamud.Logging;
+using ECommons.DalamudServices;
 using ImGuiNET;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace PunishLib
             }
             catch (Exception e)
             {
-                if (!suppressErrors) PluginLog.Error($"{e.Message}\n{e.StackTrace ?? ""}");
+                if (!suppressErrors) Svc.Log.Error($"{e.Message}\n{e.StackTrace ?? ""}");
             }
         }
         public static bool TryGetFirst<K, V>(this IDictionary<K, V> dictionary, Func<KeyValuePair<K, V>, bool> predicate, out KeyValuePair<K, V> keyValuePair)

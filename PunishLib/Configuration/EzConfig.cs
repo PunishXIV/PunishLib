@@ -1,11 +1,11 @@
 ﻿using Dalamud.Logging;
+using ECommons.DalamudServices;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Svc = PunishLib.PunishLibMain;
 
 namespace PunishLib.Configuration;
 
@@ -30,7 +30,7 @@ public static class EzConfig
         var path = DefaultConfigurationFileName;
         if(!File.Exists(path) && Svc.PluginInterface.ConfigFile.Exists)
         {
-            PluginLog.Warning($"Migrating {Svc.PluginInterface.ConfigFile} into EzConfig system");
+            Svc.Log.Warning($"Migrating {Svc.PluginInterface.ConfigFile} into EzConfig system");
             Config = LoadConfiguration<T>(Svc.PluginInterface.ConfigFile.FullName, false);
             Save();
             Config = null;
@@ -38,7 +38,7 @@ public static class EzConfig
         }
         else
         {
-            PluginLog.Information($"Migrating conditions are not met, skipping...");
+            Svc.Log.Information($"Migrating conditions are not met, skipping...");
         }
     }
 
@@ -57,18 +57,18 @@ public static class EzConfig
         if (File.Exists(antiCorruptionPath))
         {
             var saveTo = $"{antiCorruptionPath}.{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
-            PluginLog.Warning($"Detected unsuccessfully saved file {antiCorruptionPath}: moving to {saveTo}");
+            Svc.Log.Warning($"Detected unsuccessfully saved file {antiCorruptionPath}: moving to {saveTo}");
             File.Move(antiCorruptionPath, saveTo);
-            PluginLog.Warning($"Success. Please manually check {saveTo} file contents.");
+            Svc.Log.Warning($"Success. Please manually check {saveTo} file contents.");
         }
         File.WriteAllText(antiCorruptionPath, JsonConvert.SerializeObject(Configuration, new JsonSerializerSettings()
         {
             Formatting = indented ? Formatting.Indented : Formatting.None,
             DefaultValueHandling = Configuration.GetType().IsDefined(typeof(IgnoreDefaultValueAttribute), false) ?DefaultValueHandling.Ignore:DefaultValueHandling.Include
         }), Encoding.UTF8);
-        PluginLog.Verbose($"Now moving {antiCorruptionPath} to {path}");
+        Svc.Log.Verbose($"Now moving {antiCorruptionPath} to {path}");
         File.Move(antiCorruptionPath, path, true);
-        PluginLog.Verbose($"Configuration successfully saved.");
+        Svc.Log.Verbose($"Configuration successfully saved.");
     }
 
     public static T LoadConfiguration<T>(string path, bool appendConfigDirectory = true) where T : IEzConfig, new()

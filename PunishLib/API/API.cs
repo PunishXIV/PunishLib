@@ -1,4 +1,5 @@
 ﻿using Dalamud.Logging;
+using ECommons.DalamudServices;
 using PunishLib.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace PunishLib.API
         public async static Task<bool> ValidateKey()
         {
             using HttpResponseMessage responseMessage = await new HttpClient().GetAsync(APITestEndPoint + PunishLibMain.SharedConfig.APIKey);
-            PluginLog.Debug($"{responseMessage.StatusCode} {responseMessage.ReasonPhrase}");
+            Svc.Log.Debug($"{responseMessage.StatusCode} {responseMessage.ReasonPhrase}");
             if (responseMessage.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 return true;
