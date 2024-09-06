@@ -7,7 +7,7 @@ using Dalamud.Common.Game;
 #nullable enable
 namespace PunishLib.ImGuiMethods
 {
-    internal record PluginManifest
+    public record PluginManifest
     {
         /// <summary>
         /// Gets the author/s of the plugin.

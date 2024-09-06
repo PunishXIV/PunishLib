@@ -19,10 +19,10 @@ namespace PunishLib
     {
         internal static string PluginName = "";
         internal static IDalamudPluginInterface PluginInterface;
-        internal static PluginManifest PluginManifest;
         internal static AboutPlugin About;
-        public static PunishConfig PunishConfig;
         internal static SharedConfig SharedConfig;
+        public static PunishConfig PunishConfig;
+        public static PluginManifest PluginManifest;
 
         public static void Init(IDalamudPluginInterface pluginInterface, string pluginName, AboutPlugin about = null, params PunishOption[] opts)
         {
