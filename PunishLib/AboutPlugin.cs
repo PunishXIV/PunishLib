@@ -1,6 +1,6 @@
 ﻿using Dalamud.Interface;
 using Dalamud.Interface.Colors;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using PunishLib.ImGuiMethods;
 using System;
 using System.Collections.Generic;

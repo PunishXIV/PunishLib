@@ -14,7 +14,7 @@ using ECommons.ImGuiMethods;
 //using ECommons;
 //using ECommons.DalamudServices;
 //using ECommons.Reflection;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -57,7 +57,7 @@ namespace PunishLib.ImGuiMethods
             {
                 if (ThreadLoadImageHandler.TryGetTextureWrap(GetImageURL(), out var texture))
                 {
-                    ImGui.Image(texture.ImGuiHandle, new(200f, 200f));
+                    ImGui.Image(texture.Handle, new(200f, 200f));
                 }
             });
             ImGuiHelpers.ScaledDummy(10f);
