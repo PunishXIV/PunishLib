@@ -28,10 +28,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\ECommons\ECommons\ECommons.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Reference Include="Newtonsoft.Json">
             <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
             <Private>False</Private>
@@ -76,5 +72,13 @@
             <HintPath>$(DalamudLibPath)Dalamud.Common.dll</HintPath>
             <Private>False</Private>
         </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ECommons" Version="3.0.1.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="Exists('..\..\ECommons\ECommons\ECommons.csproj')">
+        <ProjectReference Include="..\..\ECommons\ECommons\ECommons.csproj" />
     </ItemGroup>
 </Project>
