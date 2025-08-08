@@ -28,6 +28,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="ECommons" Version="3.0.0.18-api13" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Reference Include="Newtonsoft.Json">
             <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
             <Private>False</Private>
