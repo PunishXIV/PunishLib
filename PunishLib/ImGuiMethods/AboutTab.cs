@@ -40,14 +40,14 @@ namespace PunishLib.ImGuiMethods
 
         static string GetImageURL()
         {
-            return PunishLibMain.PluginManifest.IconUrl ?? "";
+            return Svc.PluginInterface.Manifest.IconUrl ?? "";
         }
 
         public static void Draw(string pluginName)
         {
             ImGuiEx.ImGuiLineCentered("About1", delegate
             {
-                ImGuiEx.Text($"{pluginName} - {PunishLibMain.PluginManifest.AssemblyVersion}");
+                ImGuiEx.Text($"{pluginName} - {Svc.PluginInterface.Manifest.AssemblyVersion}");
             });
 
             PunishLibMain.About.WithLoveBy();
@@ -86,14 +86,14 @@ namespace PunishLib.ImGuiMethods
                     ImGui.SetClipboardText("https://love.puni.sh/ment.json");
                     Notify.Success("Link copied to clipboard");
                 }
-                if (PunishLibMain.PluginManifest.RepoUrl != null)
+                if (Svc.PluginInterface.Manifest.RepoUrl != null)
                 {
                     ImGui.SameLine();
                     if (ImGui.Button("Source Code"))
                     {
                         Process.Start(new ProcessStartInfo()
                         {
-                            FileName = PunishLibMain.PluginManifest.RepoUrl,
+                            FileName = Svc.PluginInterface.Manifest.RepoUrl,
                             UseShellExecute = true
                         });
                     }
