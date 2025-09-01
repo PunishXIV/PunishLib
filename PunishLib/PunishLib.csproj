@@ -16,8 +16,6 @@
         <OutputPath>bin\$(Configuration)\</OutputPath>
         <NoWarn>CS0162;CS1591;CA1401</NoWarn>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-        <EnableWindowsTargeting>true</EnableWindowsTargeting>
-        <UseWindowsForms>true</UseWindowsForms>
     </PropertyGroup>
 
     <PropertyGroup>
