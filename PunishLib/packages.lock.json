@@ -4,9 +4,9 @@
     "net9.0-windows7.0": {
       "ECommons": {
         "type": "Direct",
-        "requested": "[3.0.1.10, )",
-        "resolved": "3.0.1.10",
-        "contentHash": "EHFFs6YlI+DQemaGCyVvcLSYbkDFXds4yndVhS6V96TJ02bFrUiERx6C4erYiYZ25V9C3JblDHcRIhGLfAivuQ=="
+        "requested": "[3.0.1.22, )",
+        "resolved": "3.0.1.22",
+        "contentHash": "MT7fdS3XN0lDEPbCl9BQDS59XPDYDJd9XA6YACxMc0RAXFnDblOCU7WGtXBOkAQ4FLnZTAruwpQcnBJA2Pv31Q=="
       }
     }
   }
