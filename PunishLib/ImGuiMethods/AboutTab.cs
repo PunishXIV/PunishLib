@@ -34,7 +34,6 @@ namespace PunishLib.ImGuiMethods
         private static bool apiTestFail = false;
         private static bool disableTestButton = false;
         private static List<string> testedKeys = new();
-        private static DalamudStartInfo startInfo;
         private static List<LocalPluginInfo> installedPluginInfo = new();
         private static Regex uuidPattern = new Regex("[a-fA-F\\d]{8}(?:\\-[a-fA-F\\d]{4}){3}\\-[a-fA-F\\d]{12}$");
 
